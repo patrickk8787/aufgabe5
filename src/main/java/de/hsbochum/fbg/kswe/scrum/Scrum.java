@@ -29,7 +29,7 @@ public class Scrum {
         this.productBacklog = pbl;
     }
 
-    private void moveToNextEvent(Event event) throws UnexpectedNextEventException, InitializationException {
+    private void moveToNextEvent(Event event) throws UnexpectedNextEventException, InitializationException, Exception {
         LOG.info("Moving to next event...");
         Event previousEvent = null;
         
@@ -46,6 +46,16 @@ public class Scrum {
              * 2. the Event class exposes a method followingEventType(), but it must
              *    be implemented in the subclasses
              */
+            boolean b = previousEvent.followingEventType().isAssignableFrom(event.getClass());
+            if(!b){
+                LOG.warn(b);
+                throw new Exception ("incorrect class, was found");
+                
+            
+            }
+            
+            this.currentEvent =event;
+            
 
         }
         
@@ -53,12 +63,12 @@ public class Scrum {
         LOG.info("Moved to next event: {}", event);
     }
 
-    public void planSprint(int itemCount) throws UnexpectedNextEventException, InitializationException {
+    public void planSprint(int itemCount) throws UnexpectedNextEventException, InitializationException, Exception {
         SprintPlanning planning = new SprintPlanning(itemCount);
         moveToNextEvent(planning);
     }
     
-    public void startSprint(int numberOfDays) throws UnexpectedNextEventException, InitializationException, InvalidSprintPeriodException {
+    public void startSprint(int numberOfDays) throws UnexpectedNextEventException, InitializationException, InvalidSprintPeriodException, Exception {
         Sprint sprint = new Sprint(numberOfDays);
         ensureCorrectNumberOfDays(sprint);
         moveToNextEvent(sprint);
@@ -67,12 +77,12 @@ public class Scrum {
     public void doDailyScrum() {
     }
 
-    public void reviewSprint() throws UnexpectedNextEventException, InitializationException {
+    public void reviewSprint() throws UnexpectedNextEventException, InitializationException, Exception {
         SprintReview review = new SprintReview();
         moveToNextEvent(review);
     }
 
-    public void doSprintRetrospective() throws UnexpectedNextEventException, InitializationException {
+    public void doSprintRetrospective() throws UnexpectedNextEventException, InitializationException, Exception {
         SprintRetrospective retro = new SprintRetrospective();
         moveToNextEvent(retro);
     }
